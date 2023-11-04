@@ -112,7 +112,7 @@ import itertools
 import operator
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = (
     "AndComboMixin",
     "AndSupportMixin",
@@ -303,7 +303,8 @@ class Combo:
     Base class for the type representing a binary combination of objects of the
     discrete type (and other combinations thereof).
 
-    It also provides a ``repr()`` reflecting the relation type and inversion state.
+    It also provides ``__repr__()`` and ``__str__()`` which include the respective
+    member representations and reflect the relation type and inversion state.
 
     Objects are meant to be immutable once initialized, so rather create a fresh
     object instead of programmatically changing non-public attributes.
@@ -325,8 +326,14 @@ class Combo:
         self._inverted = inverted
 
     def __repr__(self):
+        return self._get_repr(repr)
+
+    def __str__(self):
+        return self._get_repr(str)
+
+    def _get_repr(self, repr_fn):
         if self._members:
-            inner = " {} ".format(self._BIN_OP_REPR).join(map(repr, self._members))
+            inner = " {} ".format(self._BIN_OP_REPR).join(map(repr_fn, self._members))
             # Don't show parentheses for negations of a single member
             if self._inverted and len(self._members) == 1:
                 return "~{}".format(inner)
